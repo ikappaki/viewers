@@ -4,11 +4,14 @@
             [clojure.data.json :as json]
             [nextjournal.markdown.parser :as markdown.parser]
             [nextjournal.markdown.transform :as markdown.transform])
-  (:import [org.graalvm.polyglot Context Context$Builder Engine Source Value]))
+  (:import [org.graalvm.polyglot Context Context$Builder Engine Engine$Builder Source Value]))
 
 (set! *warn-on-reflection* true)
 
-(def ^Engine engine (Engine/create))
+(def ^Engine engine
+  (let [engine-builder ^Engine$Builder (doto (Engine/newBuilder)
+                                         (.option "engine.WarnInterpreterOnly" "false"))]
+    (.build engine-builder)))
 
 (def ^Context$Builder context-builder
   (doto (Context/newBuilder (into-array String ["js"]))
